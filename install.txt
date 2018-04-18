@@ -1,0 +1,48 @@
+sudo apt-get install gpsd gpsd-clients
+
+sudo vim /etc/default/gpsd
+START_DEAMON="true"
+USBAUTO="false"
+DEVICES="/dev/ttyUSB0"
+GPSD_SOCKET="/var/run/gpsd.sock"
+
+sudo /etc/init.d/gpsd restart
+
+# Connect your GPS and check if running with :
+cgps
+
+# -------------------------
+
+sudo vim /etc/udev/rules.d/75-microchip.rules
+#DAB Serial Port
+KERNEL=="ttyACM0", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="000a", MODE="666", GROUP="pi"
+
+# Change the GROUP="pi" to the user group you want the application to access from
+
+# -------------------------
+
+unzip KeyStoneCOMM_Win_LinuxBeta_06062013.zip
+
+cd KeyStoneCOMM/KeyStoneCOMM/
+
+# On Raspberry only
+# Remove on CFLAGS key the parameters -m32
+
+# On i386 or x64 archi.
+# apt-get install g++-multilib
+
+make all
+sudo make install
+cd ../app
+
+# On Raspberry only
+# Remove on CFLAGS key the parameters -m32
+
+make
+sudo ./testdab
+
+# -------------------------
+
+git clone https://github.com/YoannQueret/keystonepy.git
+cd keystonepy
+sudo python setup.py install
